@@ -69,22 +69,34 @@ main = do
     {-|
       Main IO.
     -}
-    mainProcedure from to vocab = do
-      page <- parseLBS <$> simpleHttp url
+    mainProcedure from to vocab =
+      (parseLBS <$> simpleHttp url) >>=
       either
         TIO.putStrLn
-        ( TIO.putStr
-        . T.concat
-        . (formatVocabPair (getLang from) (getLang to) :)
-        . (stuff2 formatVocabPair (T.pack (replicate (formattedChunkLength) '=')) :)
-        . map (uncurry formatVocabPair)
+        ( TIO.putStr . T.concat . uncurry (:) .
+          ( uncurry formatVocabPair
+            ***
+            ( (stuff2 formatVocabPair headerUnderline :)
+            . map (uncurry formatVocabPair)
+            )
+          )
         )
-        $ handlePage (fromDocument page)
+        . handlePage . fromDocument
       where
+        headerUnderline = T.pack (replicate formattedChunkLength '=')
         getLang lang = fromMaybe "Unknown Language" (lookup lang languages)
         fm = fromMaybe (T.pack $ replicate formattedChunkLength ' ')
-        url = "http://" <> urlEncode (map toLower (from <> to)) <> ".dict.cc/?" <> urlEncodeVars [("s", vocab)]
+        url =
+          "http://"
+          <> urlEncode (map toLower (from <> to))
+          <> ".dict.cc/?"
+          <> urlEncodeVars [("s", vocab)]
 
-        formatOneVocab = map (T.justifyLeft formattedChunkLength ' ') . T.chunksOf formattedChunkLength
+        formatOneVocab =
+          map (T.justifyLeft formattedChunkLength ' ')
+          . T.chunksOf formattedChunkLength
         formatVocabPair v1 v2 =
-          T.unlines . fmap (uncurry (joinWith " | ") . (fm *** fm)) $ fillZip2 (formatOneVocab v1) (formatOneVocab v2)
+          T.unlines
+          . fmap (uncurry (joinWith " | ")
+          . (fm *** fm))
+          $ fillZip2 (formatOneVocab v1) (formatOneVocab v2)

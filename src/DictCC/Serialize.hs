@@ -6,26 +6,40 @@ import           Data.Bool
 import qualified Data.Text       as T
 import           DictCC.Util     (slice)
 import           Text.XML.Cursor hiding (bool)
+import Control.Monad
+import Control.Arrow
+
+
+type TranslationTable = ((T.Text, T.Text), [(T.Text, T.Text)])
 
 
 {-|
   Extract translations from the central <table> element on the HTML page.
 -}
-findTranslations :: Cursor -> [(T.Text, T.Text)]
+findTranslations :: Cursor -> TranslationTable
 findTranslations =
-  fmap
-    ( (\[a, b] -> (a, b))
-    . fmap (T.intercalate " " . ($/ ((element "a" &/ orSelf (element "b" >=> child)) >=> content)))
-    . slice 1 3
-    . child
-    )
-    . ($// (element "tr" >=> hasAttribute "id"))
+  ( listToTuple . slice 1 3 . ($// contentsOfBTags) . head
+    &&&
+    fmap
+      ( listToTuple
+      . fmap (T.intercalate " " . ($/ contentsOfAAndNestedBTags))
+      . slice 1 3
+      . child
+      )
+      . join
+      . fmap ($| hasAttribute "id")
+  )
+  . ($// element "tr")
+  where
+    contentsOfBTags = (element "b" >=> child) >=> content
+    contentsOfAAndNestedBTags = (element "a" &/ orSelf (element "b" >=> child)) >=> content
+    listToTuple [a, b] = (a, b)
 
 
 {-|
   Attempts to parse the provided HTML and extract a list of translations.
 -}
-handlePage :: Cursor -> Either T.Text [(T.Text, T.Text)]
+handlePage :: Cursor -> Either T.Text TranslationTable
 handlePage c =
   let
     main = attributeIs "id" "maincontent" &/ element "table"
