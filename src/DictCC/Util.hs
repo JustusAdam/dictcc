@@ -4,7 +4,12 @@ module DictCC.Util
   , fillZip2
   , slice
   , uncurry3
+  , stuff2
+  , joinWith
   ) where
+
+
+import           Data.Monoid
 
 
 {-|
@@ -45,3 +50,18 @@ fillZip2 (a:as) (b:bs) = (Just a, Just b) : fillZip2 as bs
 -}
 slice :: Int -> Int -> [a] -> [a]
 slice start end = take (end - start) . drop start
+
+
+{-|
+  Call a function that expects two arguments of the same type with a single value in both places.
+-}
+stuff2 :: (a -> a -> b) -> a -> b
+stuff2 f a = f a a
+
+
+{-|
+  Join two monoidal values using a third one in their middle. The first argument to this function is the interspersed one.
+-}
+joinWith :: Monoid a => a -> a -> a -> a
+joinWith = ((<>) .) . flip (<>)
+{-# INLINE joinWith #-}

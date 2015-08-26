@@ -2,7 +2,7 @@
 module DictCC.LanguageList (languages) where
 
 
-import Data.Text
+import           Data.Text
 
 
 {-|

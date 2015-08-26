@@ -76,7 +76,7 @@ main = do
         ( TIO.putStr
         . T.concat
         . (formatVocabPair (getLang from) (getLang to) :)
-        . (T.unlines [T.pack (replicate (formattedChunkLength * 2) '=')] :)
+        . (stuff2 formatVocabPair (T.pack (replicate (formattedChunkLength) '=')) :)
         . map (uncurry formatVocabPair)
         )
         $ handlePage (fromDocument page)
@@ -87,4 +87,4 @@ main = do
 
         formatOneVocab = map (T.justifyLeft formattedChunkLength ' ') . T.chunksOf formattedChunkLength
         formatVocabPair v1 v2 =
-          T.unlines . fmap (uncurry (\a b -> a <> " | " <> b) . (fm *** fm)) $ fillZip2 (formatOneVocab v1) (formatOneVocab v2)
+          T.unlines . fmap (uncurry (joinWith " | ") . (fm *** fm)) $ fillZip2 (formatOneVocab v1) (formatOneVocab v2)
