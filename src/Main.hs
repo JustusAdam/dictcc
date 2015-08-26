@@ -10,6 +10,7 @@ import           Data.Maybe
 import           Data.Monoid
 import qualified Data.Text            as T
 import qualified Data.Text.IO         as TIO
+import           DictCC.LanguageList
 import           DictCC.Serialize
 import           DictCC.Util
 import           Network.HTTP.Base    (urlEncode, urlEncodeVars)
@@ -19,15 +20,15 @@ import           Text.HTML.DOM        (parseLBS)
 import           Text.XML.Cursor      (fromDocument)
 
 
-languages =
-  [ ("en", "English")
-  , ("de", "Deutsch")
-  , ("sq", "Albanian")]
-
-
+{-|
+  Width of a display cell in the result screen.
+-}
 formattedChunkLength = 30
 
 
+{-|
+  Main function.
+-}
 main :: IO ()
 main = do
   args <- getArgs
@@ -48,6 +49,9 @@ main = do
     verify message pred = beIf message . not . all pred
 
 
+    {-|
+      Verify data input by user and either start the search or report errors.
+    -}
     verifyInputs from to vocab =
       let
         verified = mapMaybe (uncurry3 verify)
@@ -62,6 +66,9 @@ main = do
             putStrLn "There was an issue with the input data:" >>
             traverse_ putStrLn verified
 
+    {-|
+      Main IO.
+    -}
     mainProcedure from to vocab = do
       page <- parseLBS <$> simpleHttp url
       either
