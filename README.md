@@ -18,4 +18,4 @@ This project is inspired by [dict.cc.py][] or rather born out of my frustration 
 
 [dict.cc.py]: https://github.com/rbaron/dict.cc.py
 
-Though I took the idea from [dict.cc.py][] I did not use any of their code. This app is written from the ground up.
+Though the idea came from [dict.cc.py][] the code was written anew from the ground up.
