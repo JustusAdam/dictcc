@@ -16,25 +16,32 @@ type TranslationTable = ((T.Text, T.Text), [(T.Text, T.Text)])
 {-|
   Extract translations from the central <table> element on the HTML page.
 -}
-findTranslations :: Cursor -> TranslationTable
+findTranslations :: Cursor -> Either T.Text TranslationTable
 findTranslations =
-  ( listToTuple
-    . slice 1 3
-    . ($// contentsOfBTags)
-    . head
-  &&&
-    fmap
-      ( listToTuple
-      . fmap (T.intercalate " " . ($/ contentsOfAAndNestedBTags))
-      . slice 1 3
-      . child
-      )
-    . join
-    . fmap ($| hasAttribute "id")
+  ( bool
+    <$> return .
+        ( listToTuple
+          . join
+          . fmap ($/ contentsOfBTags)
+          . slice 1 3
+          . ($/ element "td")
+          . head
+        &&&
+          fmap
+            ( listToTuple
+            . fmap (T.intercalate " " . ($/ contentsOfAAndNestedBTags))
+            . slice 1 3
+            . child
+            )
+          . contentRows
+        )
+    <*> const (Left "No translations found, sorry.")
+    <*> null . contentRows
   )
   . ($// element "tr")
   where
-    contentsOfBTags = (element "b" >=> child) >=> content
+    contentRows = join . fmap ($| hasAttribute "id")
+    contentsOfBTags = (element "b" &/ orSelf (element "a" >=> child)) >=> content
     contentsOfAAndNestedBTags = (element "a" &/ orSelf (element "b" >=> child)) >=> content
     listToTuple [a, b] = (a, b)
 
@@ -49,5 +56,5 @@ handlePage c =
   in
     case c $// main of
       [_, transTable, _] ->
-        bool (Left "No translations found") <$> return <*> not . null $ findTranslations transTable
+        findTranslations transTable
       _ -> Left "No translations found"
