@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE UnicodeSyntax     #-}
 module DictCC.LanguageList (languages) where
 
 
@@ -10,7 +11,7 @@ import           Data.Text
 
   Used for displaying the language(s) in the header of the result screen.
 -}
-languages :: [(String, Text)]
+languages ∷ [(String, Text)]
 languages =
   [ ("en", "English")
   , ("de", "Deutsch")
