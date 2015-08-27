@@ -22,24 +22,24 @@ type TranslationTable = ((T.Text, T.Text), [(T.Text, T.Text)])
 findTranslations ∷ Cursor → Either T.Text TranslationTable
 findTranslations =
   ( bool
-    <$> return ∘
-        ( listToTuple
-          ∘ join
-          ∘ fmap ($/ contentsOfBTags)
+  <$> return ∘
+      ( listToTuple
+        ∘ join
+        ∘ fmap ($/ contentsOfBTags)
+        ∘ slice 1 3
+        ∘ ($/ element "td")
+        ∘ head
+      &&&
+        fmap
+          ( listToTuple
+          ∘ fmap (T.intercalate " " ∘ ($/ contentsOfAAndNestedBTags))
           ∘ slice 1 3
-          ∘ ($/ element "td")
-          ∘ head
-        &&&
-          fmap
-            ( listToTuple
-            ∘ fmap (T.intercalate " " ∘ ($/ contentsOfAAndNestedBTags))
-            ∘ slice 1 3
-            ∘ child
-            )
-          ∘ contentRows
-        )
-    ⊛ const (Left "No translations found, sorry.")
-    ⊛ null ∘ contentRows
+          ∘ child
+          )
+        ∘ contentRows
+      )
+  ⊛ const (Left "No translations found, sorry.")
+  ⊛ null ∘ contentRows
   )
   ∘ ($// element "tr")
   where
@@ -58,6 +58,5 @@ handlePage c =
     main = attributeIs "id" "maincontent" &/ element "table"
   in
     case c $// main of
-      [_, transTable, _] →
-        findTranslations transTable
-      _ → Left "No translations found"
+      [_, transTable, _] → findTranslations transTable
+      _                  → Left "No translations found"

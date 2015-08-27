@@ -15,7 +15,6 @@ import           Data.Monoid
 import           Data.Monoid.Unicode
 import qualified Data.Text                   as T
 import qualified Data.Text.IO                as TIO
-import           DictCC.LanguageList
 import           DictCC.Serialize
 import           DictCC.Util
 import           Network.HTTP.Base           (urlEncode, urlEncodeVars)
@@ -41,13 +40,14 @@ main = do
 
   case args of
     [from, to, vocab] → verifyInputs from to vocab
-    [fromto, vocab] →
+    [fromto, vocab]   →
       let
         (from, to) = splitAt 2 fromto
       in
         verifyInputs from to vocab
-    [vocab] → verifyInputs "en" "de" vocab
-    _ → putStrLn "Wrong number of arguments"
+
+    [vocab]           → verifyInputs "en" "de" vocab
+    _                 → putStrLn "Wrong number of arguments"
 
   where
     verifyShorthand = (∧) <$> isLetter ⊛ isAscii
@@ -102,6 +102,5 @@ mainProcedure from to vocab =
       ∘ T.chunksOf formattedChunkLength
     formatVocabPair v1 v2 =
       T.unlines
-      ∘ fmap (uncurry (joinWith " | ")
-      ∘ (fm ⁂ fm))
+      ∘ fmap (uncurry (joinWith " | ") ∘ (fm ⁂ fm))
       $ fillZip2 (formatOneVocab v1) (formatOneVocab v2)

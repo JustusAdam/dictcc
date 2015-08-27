@@ -1,7 +1,6 @@
 {-# LANGUAGE UnicodeSyntax #-}
 module DictCC.Util
   ( beIf
-  , (-?-)
   , fillZip2
   , slice
   , uncurry3
@@ -19,12 +18,8 @@ import           Prelude.Unicode
   Guard the presence of any value depending on a boolean.
 -}
 beIf ∷ α → Bool → Maybe α
-beIf a True = Just a
+beIf a True  = Just a
 beIf _ False = Nothing
-
-
-(-?-) ∷ a → Bool → Maybe a
-(-?-) = beIf
 
 
 {-|
