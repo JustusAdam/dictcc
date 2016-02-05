@@ -2,8 +2,9 @@
 module Main (main) where
 
 
+import           Control.Applicative ((<$>), (<*>))
 import           Data.Char
-import           Data.Foldable
+import           Data.Foldable       (traverse_)
 import           Data.Maybe
 import           DictCC
 import           DictCC.Util
