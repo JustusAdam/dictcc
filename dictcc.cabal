@@ -18,8 +18,10 @@ tested-with:         GHC >= 7.8 && <= 7.10.2
 
 library
   exposed-modules:
-    DictCC
-    DictCC.Util
+      DictCC
+    , DictCC.Util
+  other-modules:
+      DictCC.Serialize
   build-depends:
       base >=4.6 && <5.0
     , text
