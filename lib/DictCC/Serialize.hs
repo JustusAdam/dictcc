@@ -2,12 +2,13 @@
 module DictCC.Serialize (handlePage) where
 
 
+import           Control.Applicative ((<$>), (<*>))
 import           Control.Arrow
 import           Control.Monad
 import           Data.Bool
-import qualified Data.Text                   as T
-import           DictCC.Util                 (slice)
-import           Text.XML.Cursor             hiding (bool)
+import qualified Data.Text           as T
+import           DictCC.Util         (slice)
+import           Text.XML.Cursor     hiding (bool)
 
 
 type TranslationTable = ((T.Text, T.Text), [(T.Text, T.Text)])
