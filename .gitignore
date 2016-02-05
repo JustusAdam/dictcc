@@ -1,2 +1,4 @@
 dist/
 dictcc.hsproj/
+.stack-work/
+.DS_Store
