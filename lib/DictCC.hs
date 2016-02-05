@@ -1,18 +1,19 @@
 {-# LANGUAGE OverloadedStrings #-}
 module DictCC (translate) where
 
+import           Control.Applicative  ((<$>))
 import           Control.Arrow
 import           Data.Char
 import           Data.Maybe
 import           Data.Monoid
-import qualified Data.Text                   as T
-import qualified Data.Text.IO                as TIO
+import qualified Data.Text            as T
+import qualified Data.Text.IO         as TIO
 import           DictCC.Serialize
 import           DictCC.Util
-import           Network.HTTP.Base           (urlEncode, urlEncodeVars)
-import           Network.HTTP.Conduit        (simpleHttp)
-import           Text.HTML.DOM               (parseLBS)
-import           Text.XML.Cursor             (fromDocument)
+import           Network.HTTP.Base    (urlEncode, urlEncodeVars)
+import           Network.HTTP.Conduit (simpleHttp)
+import           Text.HTML.DOM        (parseLBS)
+import           Text.XML.Cursor      (fromDocument)
 
 
 

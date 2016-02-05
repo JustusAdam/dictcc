@@ -46,7 +46,6 @@ executable dictcc
   ghc-options: -Wall
 
 
-source-repository this
+source-repository head
   type: git
   location: git://github.com/JustusAdam/dictcc.git
-  

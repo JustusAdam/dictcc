@@ -5,9 +5,9 @@ module Main (main) where
 import           Data.Char
 import           Data.Foldable
 import           Data.Maybe
-import DictCC
-import System.Environment
-import DictCC.Util
+import           DictCC
+import           DictCC.Util
+import           System.Environment
 
 
 {-|
