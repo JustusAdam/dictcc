@@ -1,4 +1,4 @@
-# dictcc in Haskell
+# dictcc in Haskell [![Build Status](https://travis-ci.org/JustusAdam/dictcc.svg?branch=master)](https://travis-ci.org/JustusAdam/dictcc)
 
 This is a small command line tool for accessing dict.cc without the hassle of using an actual browser.
 
